@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">ClothingSuggesterApp</string>
+    <string name="enter_your_city">Enter your City</string>
+    <string name="_0_hpa">0 hpa</string>
+    <string name="_0_m_s">0 m/s</string>
+    <string name="_0">0%</string>
+    <string name="humidity">Humidity</string>
+    <string name="wind">Wind</string>
+    <string name="city">City</string>
+    <string name="temp_mini">Temp mini :</string>
+    <string name="feel_like_0_c">feel like : 0°C</string>
+    <string name="tody">Tody</string>
+    <string name="_0_c">0°C</string>
+    <string name="iconLink">https://openweathermap.org/img/wn/%1$s@2x.png</string>
+
+    <string name="suggested_clothing_for_today_s_weather">Suggested clothing for today\'s weather</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="temperature">%1$s°C</string>
+</resources>
