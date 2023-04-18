@@ -2,7 +2,7 @@ package com.asiasama.clothingsuggesterapp.data.model
 
 import com.google.gson.annotations.SerializedName
 
-data class Weather(
+data class WeatherStatus(
     @SerializedName("description")
     val description: String,
     @SerializedName("icon")

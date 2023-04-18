@@ -12,7 +12,7 @@ class WeatherApiService(
     fun makeRequestWeather(country: String?) {
         val response = HttpUrl.Builder()
             .scheme(SCHEME)
-            .host(BuildConfig.HOST)
+            .host(HOST)
             .addPathSegment(PATH)
             .addQueryParameter(QUERY, country)
             .addQueryParameter(APP_ID_Q, BuildConfig.APP_ID)
@@ -28,5 +28,7 @@ class WeatherApiService(
         const val PATH = "/data/2.5/weather"
         const val QUERY = "q"
         const val APP_ID_Q = "appid"
+        const val HOST = "api.openweathermap.org"
+
     }
 }

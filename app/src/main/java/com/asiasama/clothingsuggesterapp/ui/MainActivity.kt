@@ -5,9 +5,7 @@ import android.util.Log
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.widget.doAfterTextChanged
 import com.asiasama.clothingsuggesterapp.R
-import com.asiasama.clothingsuggesterapp.data.model.Clothing
 import com.asiasama.clothingsuggesterapp.util.PrefsUtil.initSharedPreferences
 import com.asiasama.clothingsuggesterapp.databinding.ActivityMainBinding
 import com.asiasama.clothingsuggesterapp.data.remote.WeatherApiService
@@ -71,34 +69,29 @@ class MainActivity : AppCompatActivity(), Callback {
 
     private fun updateUi(result: WeatherResponce) {
         binding.apply {
-            temp.text = root.context.getString(
-                R.string.temperature,
-                result.main?.temperature?.convertToCelyzy()
-            )
-            val randomImage =
-                result.main?.temperature?.convertToCelyzy()?.toInt()
-                    ?.let { getClothes.getClothes(it).random() }
+            val temperature = result.main.temperature.convertToCelyzy()
+            textViewTemp.text = root.context.getString(R.string.temperature, temperature)
+            textViewTempDescription.text = result.weather.first().description
+            var randomImage = temperature.toInt().let { getClothes.getClothes(it).random() }
             Picasso.get()
                 .load(root.context.getString(R.string.iconLink, result.weather.first().icon))
                 .into(iconWeather)
 
             if (PrefsUtil.image.isNullOrEmpty()) { // if there is no last worn clothes
-                getClothesLocal(randomImage!!.image, imageClothis)
-            } else if (PrefsUtil.image != randomImage!!.image) { // if the last worn clothes is not the same as the new one
-                getClothesLocal(randomImage.image, imageClothis)
-            } else if (PrefsUtil.image == randomImage.image) { // if the last worn clothes is the same as the new one
-                getClothesLocal(randomImage.image, imageClothis)
+                updateSuggestionsClothes(randomImage.image, imageClothis)
+            } else if (PrefsUtil.image != randomImage.image) { // if the last worn clothes is not the same as the new one
+                updateSuggestionsClothes(randomImage.image, imageClothis)
+            } else {
+                randomImage = temperature.toInt().let { getClothes.getClothes(it).random() }
+                updateSuggestionsClothes(randomImage.image, imageClothis)
             }
-
         }
     }
 
-    private fun getClothesLocal(randomImage: String, drawable: ShapeableImageView) {
+    private fun updateSuggestionsClothes(randomImage: String, drawable: ShapeableImageView) {
         saveImage(randomImage)
         Picasso.get().load(loadImage()).into(drawable)
     }
-
-
 }
 
 

@@ -1,10 +1,9 @@
 package com.asiasama.clothingsuggesterapp.data.model
 
-import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 
 
-data class Main(
+data class WeatherInformation(
     @SerializedName("temp")
     val temperature: String,
     @SerializedName("temp_min")

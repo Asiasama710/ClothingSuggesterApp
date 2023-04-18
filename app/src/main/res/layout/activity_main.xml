@@ -16,7 +16,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView"
+        app:layout_constraintTop_toBottomOf="@+id/textViewDescription"
         app:layout_constraintVertical_bias="0.6"
         app:shapeAppearance="@style/ShapeAppearance.Material3.Corner.Large"
         tools:ignore="ContentDescription" />
@@ -44,7 +44,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/textViewDescription"
         android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="50dp"
@@ -53,14 +53,15 @@
         android:textColor="@color/text_color"
         android:textSize="@dimen/size_larg"
         app:layout_constraintStart_toStartOf="@+id/image_clothis"
-        app:layout_constraintTop_toBottomOf="@+id/temp" />
+        app:layout_constraintTop_toBottomOf="@+id/textViewTemp" />
+
 
     <TextView
-        android:id="@+id/temp"
+        android:id="@+id/textViewTemp"
         style="@style/TextAppearance.Material3.TitleMedium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="@dimen/margin_medum"
         android:layout_marginTop="50dp"
         android:elevation="@dimen/ele_text"
         android:fontFamily="monospace"
@@ -70,6 +71,19 @@
         app:layout_constraintStart_toStartOf="@+id/input_name"
         app:layout_constraintTop_toBottomOf="@+id/input_name" />
 
+    <TextView
+        android:id="@+id/textViewTempDescription"
+        style="@style/TextAppearance.Material3.TitleMedium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:elevation="@dimen/ele_text"
+        android:fontFamily="monospace"
+        android:text="@string/_0_c"
+        android:textColor="@color/text_color"
+        android:textSize="@dimen/size_medum"
+        app:layout_constraintStart_toStartOf="@+id/textViewTemp"
+        app:layout_constraintTop_toBottomOf="@+id/textViewTemp" />
+
 
     <ImageView
         android:id="@+id/icon_weather"
@@ -77,9 +91,9 @@
         android:layout_height="100dp"
         android:layout_marginEnd="@dimen/margin_medum"
         android:elevation="@dimen/dim12"
-        app:layout_constraintBottom_toBottomOf="@+id/temp"
+        app:layout_constraintBottom_toBottomOf="@+id/textViewTemp"
         app:layout_constraintEnd_toEndOf="@+id/input_name"
-        app:layout_constraintTop_toTopOf="@+id/temp" />
+        app:layout_constraintTop_toTopOf="@+id/textViewTemp" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

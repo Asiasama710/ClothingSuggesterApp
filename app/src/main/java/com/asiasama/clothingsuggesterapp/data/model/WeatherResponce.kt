@@ -7,11 +7,11 @@ data class WeatherResponce(
     @SerializedName("name")
     val name: String,
     @SerializedName("main")
-    val main: Main?,
+    val main: WeatherInformation,
     @SerializedName("wind")
     val wind: WindInfo,
     @SerializedName("weather")
-    val weather: List<Weather>,
+    val weather: List<WeatherStatus>,
     @SerializedName("cod")
     val cod: Int
 )
