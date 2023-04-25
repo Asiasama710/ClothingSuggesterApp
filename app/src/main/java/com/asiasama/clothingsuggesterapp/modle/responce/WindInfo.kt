@@ -1,4 +1,4 @@
-package com.asiasama.clothingsuggesterapp.data.model
+package com.asiasama.clothingsuggesterapp.modle.responce
 
 import com.google.gson.annotations.SerializedName
 

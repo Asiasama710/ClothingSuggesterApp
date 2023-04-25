@@ -1,4 +1,4 @@
-package com.asiasama.clothingsuggesterapp.data.remote
+package com.asiasama.clothingsuggesterapp.modle.remote
 
 import com.asiasama.clothingsuggesterapp.BuildConfig
 import okhttp3.*

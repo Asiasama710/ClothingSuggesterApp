@@ -1,33 +1,38 @@
 package com.asiasama.clothingsuggesterapp.ui
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isGone
+import androidx.core.view.isVisible
+import androidx.core.widget.doOnTextChanged
 import com.asiasama.clothingsuggesterapp.R
-import com.asiasama.clothingsuggesterapp.util.PrefsUtil.initSharedPreferences
 import com.asiasama.clothingsuggesterapp.databinding.ActivityMainBinding
-import com.asiasama.clothingsuggesterapp.data.remote.WeatherApiService
-import com.asiasama.clothingsuggesterapp.data.remote.ClothesDatasource
-import com.asiasama.clothingsuggesterapp.data.model.WeatherResponce
+import com.asiasama.clothingsuggesterapp.modle.remote.ClothesDatasource
+import com.asiasama.clothingsuggesterapp.modle.responce.WeatherResponce
+import com.asiasama.clothingsuggesterapp.ui.presenter.HomePresenter
+import com.asiasama.clothingsuggesterapp.ui.presenter.IViewHome
 import com.asiasama.clothingsuggesterapp.util.PrefsUtil
+import com.asiasama.clothingsuggesterapp.util.PrefsUtil.initSharedPreferences
 import com.asiasama.clothingsuggesterapp.util.PrefsUtil.loadImage
 import com.asiasama.clothingsuggesterapp.util.PrefsUtil.saveImage
+import com.asiasama.clothingsuggesterapp.util.UiState
 import com.asiasama.clothingsuggesterapp.util.convertToCelyzy
-import com.asiasama.clothingsuggesterapp.util.toJson
 import com.google.android.material.imageview.ShapeableImageView
 import com.squareup.picasso.Picasso
-import okhttp3.Call
-import okhttp3.Callback
-import okhttp3.Response
-import okio.IOException
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.core.Observer
+import java.util.concurrent.TimeUnit
 
-class MainActivity : AppCompatActivity(), Callback {
+class MainActivity : AppCompatActivity(), IViewHome {
 
     private lateinit var binding: ActivityMainBinding
     private var getClothes: ClothesDatasource = ClothesDatasource()
-    private val apiService = WeatherApiService(this)
+    private val homePresenter = HomePresenter(this)
+//    private val apiService = WeatherApiService(this)
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,55 +40,65 @@ class MainActivity : AppCompatActivity(), Callback {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         initSharedPreferences(this)
-        apiService.makeRequestWeather("iraq")
+        homePresenter.loadWeatherData("iraq")
         findCity()
-
-
     }
 
-    private fun findCity() {
-        binding.inputName.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                if (binding.inputName.text.toString().isNotEmpty()) {
-                    apiService.makeRequestWeather(binding.inputName.text.toString())
-                } else {
-                    Toast.makeText(this, "Please enter a city name", Toast.LENGTH_SHORT).show()
+    override fun weatherStatus(status: UiState) {
+        runOnUiThread {
+            when (status) {
+                is UiState.Loading -> {
+                    binding.progressBarLoading.isVisible = true
                 }
-                true
-            } else {
-                false
+
+                is UiState.Success -> {
+                    binding.progressBarLoading.isGone = true
+                    updateUi(status.data as WeatherResponce)
+                }
+
+                is UiState.Error -> {
+                    binding.progressBarLoading.isVisible = false
+                    Toast.makeText(this, status.error, Toast.LENGTH_SHORT).show()
+                }
+
             }
         }
     }
 
-    override fun onFailure(call: Call, e: IOException) {
-        Log.i("TAG", "fail:${e.message}")
-
-    }
-
-    override fun onResponse(call: Call, response: Response) {
-        val result = response.toJson(WeatherResponce::class.java)
-        runOnUiThread { updateUi(result) }
+    @SuppressLint("CheckResult")
+    private fun findCity() {
+        Observable.create { emitter ->
+            binding.inputName.doOnTextChanged { text, _, _, _ ->
+                emitter.onNext(text.toString())
+            }
+        }.debounce(1, TimeUnit.SECONDS)
+         .subscribe { homePresenter.loadWeatherData(it)
+             Log.i("TAG", "onNext: $it")
+         }
     }
 
 
     private fun updateUi(result: WeatherResponce) {
-        binding.apply {
-            val temperature = result.main.temperature.convertToCelyzy()
-            textViewTemp.text = root.context.getString(R.string.temperature, temperature)
-            textViewTempDescription.text = result.weather.first().description
-            var randomImage = temperature.toInt().let { getClothes.getClothes(it).random() }
-            Picasso.get()
-                .load(root.context.getString(R.string.iconLink, result.weather.first().icon))
-                .into(iconWeather)
+        runOnUiThread {
+            binding.apply {
+                val temperature = result.main?.temperature?.convertToCelyzy()
+                textViewTemp.text = root.context.getString(R.string.temperature, temperature ?: 0)
+                textViewTempDescription.text = result.weather?.first()?.description
+                var randomImage =
+                    temperature?.toInt().let { getClothes.getClothes(it ?: 0).random() }
+                Picasso.get()
+                    .load(root.context.getString(R.string.iconLink, result.weather?.first()?.icon))
+                    .into(iconWeather)
 
-            if (PrefsUtil.image.isNullOrEmpty()) { // if there is no last worn clothes
-                updateSuggestionsClothes(randomImage.image, imageClothis)
-            } else if (PrefsUtil.image != randomImage.image) { // if the last worn clothes is not the same as the new one
-                updateSuggestionsClothes(randomImage.image, imageClothis)
-            } else {
-                randomImage = temperature.toInt().let { getClothes.getClothes(it).random() }
-                updateSuggestionsClothes(randomImage.image, imageClothis)
+                if (PrefsUtil.image.isNullOrEmpty()) { // if there is no last worn clothes
+                    updateSuggestionsClothes(randomImage.image, imageClothis)
+                } else if (PrefsUtil.image != randomImage.image) { // if the last worn clothes is not the same as the new one
+                    updateSuggestionsClothes(randomImage.image, imageClothis)
+                } else {
+                    randomImage =
+                        temperature?.toInt().let { getClothes.getClothes(it ?: 0).random() }
+                    updateSuggestionsClothes(randomImage.image, imageClothis)
+                }
             }
         }
     }
@@ -92,6 +107,8 @@ class MainActivity : AppCompatActivity(), Callback {
         saveImage(randomImage)
         Picasso.get().load(loadImage()).into(drawable)
     }
+
+
 }
 
 

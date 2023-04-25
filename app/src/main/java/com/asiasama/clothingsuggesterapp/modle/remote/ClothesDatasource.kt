@@ -1,11 +1,11 @@
-package com.asiasama.clothingsuggesterapp.data.remote
+package com.asiasama.clothingsuggesterapp.modle.remote
 
-import com.asiasama.clothingsuggesterapp.data.model.Clothing
+import com.asiasama.clothingsuggesterapp.modle.responce.Clothing
 
 class ClothesDatasource {
     fun getClothes(temperature: Int): List<Clothing> {
         return when (temperature) {
-            in 0..10 -> listOf(
+            in 1..10 -> listOf(
                 Clothing("1", "Jacket", "top", "0-10", "https://i.pinimg.com/236x/9c/be/f8/9cbef8f6729dd2ced09873694b1b0988.jpg"),
                 Clothing("2", "T-shirt", "top", "0-10", "https://i.pinimg.com/236x/c7/36/07/c736079c2ad6f8ceb14b4eb1f296f24a.jpg"),
                 Clothing("3", "Jeans", "bottom", "0-10", "https://i.pinimg.com/564x/7c/09/8b/7c098b3dd468cabb04215b175206242f.jpg"),
