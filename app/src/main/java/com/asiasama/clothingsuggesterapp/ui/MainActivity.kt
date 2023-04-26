@@ -1,11 +1,18 @@
 package com.asiasama.clothingsuggesterapp.ui
 
+import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.location.Location
+import android.location.LocationManager
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
-import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
@@ -21,18 +28,21 @@ import com.asiasama.clothingsuggesterapp.util.PrefsUtil.loadImage
 import com.asiasama.clothingsuggesterapp.util.PrefsUtil.saveImage
 import com.asiasama.clothingsuggesterapp.util.UiState
 import com.asiasama.clothingsuggesterapp.util.convertToCelyzy
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.google.android.material.imageview.ShapeableImageView
 import com.squareup.picasso.Picasso
 import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.core.Observer
 import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity(), IViewHome {
 
     private lateinit var binding: ActivityMainBinding
     private var getClothes: ClothesDatasource = ClothesDatasource()
+    private lateinit var locationManager: LocationManager
+    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+
     private val homePresenter = HomePresenter(this)
-//    private val apiService = WeatherApiService(this)
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,7 +50,9 @@ class MainActivity : AppCompatActivity(), IViewHome {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         initSharedPreferences(this)
-        homePresenter.loadWeatherData("iraq")
+        locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+        getCurrentLocation()
         findCity()
     }
 
@@ -72,7 +84,7 @@ class MainActivity : AppCompatActivity(), IViewHome {
                 emitter.onNext(text.toString())
             }
         }.debounce(1, TimeUnit.SECONDS)
-         .subscribe { homePresenter.loadWeatherData(it)
+         .subscribe { homePresenter.loadWeatherDataByCountryName(it)
              Log.i("TAG", "onNext: $it")
          }
     }
@@ -106,6 +118,73 @@ class MainActivity : AppCompatActivity(), IViewHome {
     private fun updateSuggestionsClothes(randomImage: String, drawable: ShapeableImageView) {
         saveImage(randomImage)
         Picasso.get().load(loadImage()).into(drawable)
+    }
+
+    private fun getCurrentLocation() {
+        if (checkPermission()) {
+            if (isLocationEnabled()) {
+                if (ActivityCompat.checkSelfPermission(this,
+                        Manifest.permission.ACCESS_FINE_LOCATION
+                    ) !=
+                    PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                        this, Manifest.permission.ACCESS_COARSE_LOCATION
+                    ) != PackageManager.PERMISSION_GRANTED) {
+                    requestPermissions()
+                    return
+                }
+                fusedLocationProviderClient.lastLocation.addOnCompleteListener(this) { location ->
+                    val location: Location? = location.result
+                    if (location != null) {
+                        Toast.makeText(this, "Get Success", Toast.LENGTH_SHORT).show()
+                        homePresenter.loadWeatherData(location.latitude.toString(), location.longitude.toString())
+                    } else {
+                        Toast.makeText(this, "Null Received", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            } else {
+                Toast.makeText(this, "Turn on location ", Toast.LENGTH_SHORT).show()
+                val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+                startActivity(intent)
+            }
+        } else {
+            requestPermissions()
+        }
+    }
+    private fun isLocationEnabled(): Boolean {
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(
+            LocationManager.NETWORK_PROVIDER
+        )
+    }
+    private fun requestPermissions() {
+        ActivityCompat.requestPermissions(
+            this, arrayOf(
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ),
+           PERMISSION_PEQEST_ACCESS_LOCATION
+        )
+    }
+    private fun checkPermission(): Boolean {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+            == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this, Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED) {
+            return true
+        }
+        return false
+    }
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray, ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            Toast.makeText(applicationContext, "Granted", Toast.LENGTH_SHORT).show()
+            getCurrentLocation()
+        } else {
+            Toast.makeText(applicationContext, "Denied", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    companion object {
+        private const val PERMISSION_PEQEST_ACCESS_LOCATION = 100
     }
 
 

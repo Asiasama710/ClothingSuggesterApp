@@ -13,5 +13,8 @@ data class WeatherResponce(
     @SerializedName("weather")
     val weather: List<WeatherStatus?>?,
     @SerializedName("cod")
-    val cod: Int
+    val cod: Int,
+    @SerializedName("id")
+    val id: Int
+
 )
