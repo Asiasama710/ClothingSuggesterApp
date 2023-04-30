@@ -1,110 +1,124 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ui.MainActivity">
+    xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+        <variable
+            name="viewModel"
+            type="com.asiasama.clothingsuggesterapp.ui.MainViewModel" />
 
-    <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/image_clothis"
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_margin="@dimen/margin_larg"
-        android:scaleType="centerCrop"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewDescription"
-        app:layout_constraintVertical_bias="0.6"
-        app:shapeAppearance="@style/ShapeAppearance.Material3.Corner.Large"
-        tools:ignore="ContentDescription" />
-
-    <EditText
-        android:id="@+id/input_name"
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:layout_marginHorizontal="@dimen/margin_medum"
-        android:layout_marginStart="@dimen/margin_larg"
-        android:layout_marginTop="@dimen/margin_medum"
-        android:layout_marginEnd="@dimen/margin_larg"
-        android:background="@drawable/search_background"
-        android:drawableStart="@drawable/ic_baseline_search_24"
-        android:drawablePadding="@dimen/dim12"
-        android:hint="@string/enter_your_city"
-        android:imeOptions="actionSearch"
-        android:maxLines="1"
-        android:paddingHorizontal="@dimen/padding_larg"
-        android:singleLine="true"
-        android:textColor="@color/dark_blue"
-        android:textSize="@dimen/size_medum"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <androidx.core.widget.ContentLoadingProgressBar
-        android:id="@+id/progressBarLoading"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:visibility="visible"
-        android:elevation="12dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/textViewDescription"
-        android:layout_width="250dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
-        android:fontFamily="sans-serif-medium"
-        android:text="@string/suggested_clothing_for_today_s_weather"
-        android:textColor="@color/text_color"
-        android:textSize="@dimen/size_larg"
-        app:layout_constraintStart_toStartOf="@+id/image_clothis"
-        app:layout_constraintTop_toBottomOf="@+id/textViewTemp" />
+        android:layout_height="match_parent"
+        tools:context=".ui.MainActivity">
 
 
-    <TextView
-        android:id="@+id/textViewTemp"
-        style="@style/TextAppearance.Material3.TitleMedium"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/margin_medum"
-        android:layout_marginTop="50dp"
-        android:elevation="@dimen/ele_text"
-        android:fontFamily="monospace"
-        android:text="@string/_0_c"
-        android:textColor="@color/text_color"
-        android:textSize="@dimen/size_more_larg"
-        app:layout_constraintStart_toStartOf="@+id/input_name"
-        app:layout_constraintTop_toBottomOf="@+id/input_name" />
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/image_clothis"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_margin="@dimen/margin_larg"
+            android:scaleType="centerCrop"
+            app:imageUrl="@{viewModel.clothes}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewDescription"
+            app:layout_constraintVertical_bias="0.6"
+            app:shapeAppearance="@style/ShapeAppearance.Material3.Corner.Large"
+            tools:ignore="ContentDescription" />
 
-    <TextView
-        android:id="@+id/textViewTempDescription"
-        style="@style/TextAppearance.Material3.TitleMedium"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:elevation="@dimen/ele_text"
-        android:fontFamily="monospace"
-        android:text="@string/_0_c"
-        android:textColor="@color/text_color"
-        android:textSize="@dimen/size_medum"
-        app:layout_constraintStart_toStartOf="@+id/textViewTemp"
-        app:layout_constraintTop_toBottomOf="@+id/textViewTemp" />
+        <EditText
+            android:id="@+id/input_name"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginHorizontal="@dimen/margin_medum"
+            android:layout_marginStart="@dimen/margin_larg"
+            android:layout_marginTop="@dimen/margin_medum"
+            android:layout_marginEnd="@dimen/margin_larg"
+            android:background="@drawable/search_background"
+            android:drawableStart="@drawable/ic_baseline_search_24"
+            android:drawablePadding="@dimen/dim12"
+            android:hint="@string/enter_your_city"
+            android:imeOptions="actionSearch"
+            android:maxLines="1"
+            android:text="@={viewModel.cityName}"
+            android:paddingHorizontal="@dimen/padding_larg"
+            android:singleLine="true"
+            android:textColor="@color/dark_blue"
+            android:textSize="@dimen/size_medum"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.core.widget.ContentLoadingProgressBar
+            android:id="@+id/progressBarLoading"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:visibility="visible"
+            android:elevation="12dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/textViewDescription"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            android:fontFamily="sans-serif-medium"
+            android:text="@string/suggested_clothing_for_today_s_weather"
+            android:textColor="@color/text_color"
+            android:textSize="@dimen/size_larg"
+            app:layout_constraintStart_toStartOf="@+id/image_clothis"
+            app:layout_constraintTop_toBottomOf="@+id/textViewTemp" />
 
 
-    <ImageView
-        android:id="@+id/icon_weather"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_marginEnd="@dimen/margin_medum"
-        android:elevation="@dimen/dim12"
-        app:layout_constraintBottom_toBottomOf="@+id/textViewTemp"
-        app:layout_constraintEnd_toEndOf="@+id/input_name"
-        app:layout_constraintTop_toTopOf="@+id/textViewTemp" />
+        <TextView
+            android:id="@+id/textViewTemp"
+            style="@style/TextAppearance.Material3.TitleMedium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/margin_medum"
+            android:layout_marginTop="50dp"
+            android:elevation="@dimen/ele_text"
+            android:fontFamily="monospace"
+            tools:text="@string/_0_c"
+            android:text="@{viewModel.weatherStatus.main.temperature.toString() + `°C`}"
+            android:textColor="@color/text_color"
+            android:textSize="@dimen/size_more_larg"
+            app:layout_constraintStart_toStartOf="@+id/input_name"
+            app:layout_constraintTop_toBottomOf="@+id/input_name" />
+
+        <TextView
+            android:id="@+id/textViewTempDescription"
+            style="@style/TextAppearance.Material3.TitleMedium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:elevation="@dimen/ele_text"
+            android:fontFamily="monospace"
+            tools:text="@string/_0_c"
+            android:text="@{viewModel.weatherStatus.weather[0].description}"
+            android:textColor="@color/text_color"
+            android:textSize="@dimen/size_medum"
+            app:layout_constraintStart_toStartOf="@+id/textViewTemp"
+            app:layout_constraintTop_toBottomOf="@+id/textViewTemp" />
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <ImageView
+            android:id="@+id/icon_weather"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginEnd="@dimen/margin_medum"
+            android:elevation="@dimen/dim12"
+            app:layout_constraintBottom_toBottomOf="@+id/textViewTemp"
+            app:layout_constraintEnd_toEndOf="@+id/input_name"
+            app:layout_constraintTop_toTopOf="@+id/textViewTemp" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

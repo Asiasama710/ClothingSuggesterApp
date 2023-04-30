@@ -1,9 +1,8 @@
-package com.asiasama.clothingsuggesterapp.modle.remote
+package com.asiasama.clothingsuggesterapp.data.remote
 
 import android.util.Log
 import com.asiasama.clothingsuggesterapp.BuildConfig
-import com.asiasama.clothingsuggesterapp.modle.responce.Clothing
-import com.asiasama.clothingsuggesterapp.modle.responce.WeatherResponce
+import com.asiasama.clothingsuggesterapp.data.responce.WeatherResponce
 import com.asiasama.clothingsuggesterapp.util.toJson
 import io.reactivex.rxjava3.core.Single
 import okhttp3.*
@@ -11,7 +10,6 @@ import org.json.JSONObject
 
 class ApiServiceImpl : ApiService {
     private val client = OkHttpClient()
-    private val clothes = ClothesDatasource()
     override fun getWeatherLocation(lon: String, lat: String?): Single<WeatherResponce> {
         val url = HttpUrl.Builder()
             .scheme(SCHEME)
@@ -22,6 +20,8 @@ class ApiServiceImpl : ApiService {
             .addQueryParameter(APP_ID_Q, BuildConfig.APP_ID)
             .build()
         val request = Request.Builder().url(url).build()
+        Log.e("TAG", "request =lat: ${lat}, lon: ${lon}")
+        Log.e("TAG", "requested =${request}")
         return Single.create { emitter ->
             client.newCall(request).execute().use { response ->
                 if (response.isSuccessful) {
@@ -88,9 +88,7 @@ class ApiServiceImpl : ApiService {
         }
     }
     
-    override fun getClothes(temperature: Int): List<Clothing> {
-        return clothes.getClothes(temperature)
-    }
+
 
     companion object {
         const val SCHEME = "https"

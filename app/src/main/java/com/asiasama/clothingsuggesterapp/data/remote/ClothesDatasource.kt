@@ -1,6 +1,6 @@
-package com.asiasama.clothingsuggesterapp.modle.remote
+package com.asiasama.clothingsuggesterapp.data.remote
 
-import com.asiasama.clothingsuggesterapp.modle.responce.Clothing
+import com.asiasama.clothingsuggesterapp.data.responce.Clothing
 
 class ClothesDatasource {
     fun getClothes(temperature: Int): List<Clothing> {
