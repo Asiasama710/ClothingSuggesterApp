@@ -13,8 +13,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
 import com.asiasama.clothingsuggesterapp.R
+import com.asiasama.clothingsuggesterapp.data.remote.responce.WeatherResponce
 import com.asiasama.clothingsuggesterapp.databinding.ActivityMainBinding
-import com.asiasama.clothingsuggesterapp.data.responce.WeatherResponce
 import com.asiasama.clothingsuggesterapp.util.PrefsUtil.initSharedPreferences
 import com.asiasama.clothingsuggesterapp.util.convertToCelyzy
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -39,9 +39,9 @@ class MainActivity : AppCompatActivity() {
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
 
         getCurrentLocation()
-        viewModel.weatherStatus.observe(this) {
-            updateUi(it)
-        }
+//        viewModel.weatherStatus.observe(this) {
+//            updateUi(it)
+//        }
         viewModel.clothes.observe(this) {
             Picasso.get().load(it).into(binding.imageClothis)
         }

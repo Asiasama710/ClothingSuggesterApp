@@ -1,4 +1,4 @@
-package com.asiasama.clothingsuggesterapp.data.responce
+package com.asiasama.clothingsuggesterapp.data.remote.responce
 
 import com.google.gson.annotations.SerializedName
 

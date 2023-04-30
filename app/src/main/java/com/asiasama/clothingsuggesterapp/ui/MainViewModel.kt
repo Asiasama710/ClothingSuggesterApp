@@ -4,8 +4,8 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.asiasama.clothingsuggesterapp.data.remote.responce.WeatherResponce
 import com.asiasama.clothingsuggesterapp.data.repository.MainRepositoryImp
-import com.asiasama.clothingsuggesterapp.data.responce.WeatherResponce
 import com.asiasama.clothingsuggesterapp.util.PrefsUtil
 import com.asiasama.clothingsuggesterapp.util.addTo
 import com.asiasama.clothingsuggesterapp.util.handleThreadsAndSubscribe
@@ -47,7 +47,7 @@ class MainViewModel : ViewModel() {
     }
 
     fun getLocalClothes(temperature: Int) {
-        var suggestCloth = repository.getClothes(temperature).random().image
+        var suggestCloth = repository.getLocalClothes(temperature).random().image
         if (PrefsUtil.image.isNullOrEmpty()) { // if there is no last worn clothes
             PrefsUtil.saveImage(suggestCloth)
         } else if (PrefsUtil.image != suggestCloth) { // if the last worn clothes is not the same as the new one

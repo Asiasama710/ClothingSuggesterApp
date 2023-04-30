@@ -1,6 +1,6 @@
-package com.asiasama.clothingsuggesterapp.data.remote
+package com.asiasama.clothingsuggesterapp.data.local
 
-import com.asiasama.clothingsuggesterapp.data.responce.Clothing
+import com.asiasama.clothingsuggesterapp.data.remote.responce.Clothing
 
 class ClothesDatasource {
     fun getClothes(temperature: Int): List<Clothing> {
