@@ -40,6 +40,7 @@ class MainViewModel : ViewModel() {
 
     private fun onWeatherDataSuccess(weather: WeatherResponce?) {
         _weatherStatus.postValue(weather)
+        getLocalClothes(weatherStatus.value?.main?.temperature?.toInt() ?: 0)
     }
 
     private fun onWeatherDataFailure(e: Throwable) {

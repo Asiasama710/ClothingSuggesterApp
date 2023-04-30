@@ -13,13 +13,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
 import com.asiasama.clothingsuggesterapp.R
-import com.asiasama.clothingsuggesterapp.data.remote.responce.WeatherResponce
 import com.asiasama.clothingsuggesterapp.databinding.ActivityMainBinding
 import com.asiasama.clothingsuggesterapp.util.PrefsUtil.initSharedPreferences
-import com.asiasama.clothingsuggesterapp.util.convertToCelyzy
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.squareup.picasso.Picasso
 
 class MainActivity : AppCompatActivity() {
 
@@ -32,39 +29,18 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
-        setContentView(binding.root)
         binding.viewModel = viewModel
+        binding.lifecycleOwner = this
         initSharedPreferences(this)
         locationManager = getSystemService(LOCATION_SERVICE) as LocationManager
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
 
         getCurrentLocation()
-//        viewModel.weatherStatus.observe(this) {
-//            updateUi(it)
-//        }
-        viewModel.clothes.observe(this) {
-            Picasso.get().load(it).into(binding.imageClothis)
-        }
         viewModel.cityName.observe(this) {
             viewModel.getWeatherDataByCountryName(it)
         }
 
     }
-
-    private fun updateUi(result: WeatherResponce) {
-        val temperature = result.main?.temperature?.convertToCelyzy()?.toInt()
-
-        binding.apply {
-            textViewTemp.text = root.context.getString(R.string.temperature, temperature.toString())
-            textViewTempDescription.text = result.weather?.first()?.description
-            Picasso.get()
-                .load(root.context.getString(R.string.iconLink, result.weather?.first()?.icon))
-                .into(iconWeather)
-        }
-        viewModel.getLocalClothes(temperature ?: 0)
-
-    }
-
 
     private fun getCurrentLocation() {
         if (checkPermission()) {
